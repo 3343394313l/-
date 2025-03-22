@@ -14,26 +14,32 @@ import re
 import winsound
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import subprocess
-import pygame
 from os import system as clr
-#----------------------------------------------------------超级屎山代码 值得拥有
-def jinghua(x):
-    x = x.replace('"', '\\"')
-    dr.execute_script(f"""
-    var element = document.evaluate("{x}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    if (element) {{
-        element.remove();
-    }}
-""")
-def pan(x,y):
-    while(1):
+#----------------------------------------------------------------------------------------------超级屎山代码 值得拥有
+def panduan3():
+    global smdm,runmode
+    if(runmode==3):
         try:
-            a=dr.find_element(By.XPATH,x).text
-            if(a==y):
-                break
+            s(0.2)
+            ul_element = dr.find_element(By.CLASS_NAME, "prev_ul.clearfix")
+            li_elements = ul_element.find_elements(By.TAG_NAME, "li")
+            if (len(li_elements) == 3 and  "active" in li_elements[0].get_attribute("class")):  # 判断第一个 li 是否有 active 类名
+                cl(li_elements[1])      
+            smdm+='Y'
         except:
-            pass
-        s(0.1)
+            smdm+='E'
+def what_time(start_time):
+    now = datetime.now()
+    time_difference = now - start_time
+    hours, remainder = divmod(time_difference.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    result = []
+    if hours > 0:
+        result.append(f"{hours}h")
+    if minutes > 0:
+        result.append(f"{minutes}m")
+    result.append(f"{seconds}s")
+    return ' '.join(result)
 def pand(x,y):
     while(1):
         try:
@@ -44,8 +50,35 @@ def pand(x,y):
         except:
             pass
         s(0.1)
+#element = driver.find_element_by_link_text("课程")
+def pandwb():
+    while(1):
+        try:
+            a=dr.find_element(By.XPATH, "//*[@title='课程']")
+            cl(a)
+            break
+        except:
+            pass
+    s(0.1)
 def q():
     clr('cls')
+js_codejh = """
+const xpaths = [
+    '/html/body/div[6]/div/div[1]/h2',
+    '/html/body/div[6]/div/div[1]',
+    '//*[@id="selector"]/div[3]/div[1]',
+    '/html/body/div[7]/div[3]/div/div[1]/div[1]',
+    '//*[@id="selector"]/div[2]'
+];
+
+xpaths.forEach(xpath => {
+    const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    if (element) {
+        element.remove();
+    }
+});
+"""
+
 s=time.sleep
 import keyboard
 def huiche():
@@ -54,42 +87,10 @@ def cl(x):
     dr.execute_script("arguments[0].click();", x)
 def f(x):
     return dr.find_element(By.XPATH,x)
-# options = webdriver.ChromeOptions()
-# options.add_argument(f"user-data-dir=C:/Users/lvjiale/AppData/Local/Google/Chrome/User Data")
-# # options.add_argument(f"user-data-dir=C:/Users/205206/AppData/Local/Google/Chrome/User Data")
-# driver_path ='chromedriver-win64\chromedriver.exe'  
-# service = Service(driver_path)
-# dr = webdriver.Chrome(service=service,options=options)
 import sys
-
-# 获取 .exe 文件所在目录或脚本所在目录
-if getattr(sys, 'frozen', False):
-    base_dir = os.path.dirname(sys.executable)  # 打包后使用 .exe 文件所在目录
-else:
-    base_dir = os.path.dirname(os.path.abspath(__file__))  # 脚本模式下使用脚本所在目录
-os.chdir(base_dir)
-chrome_path = os.path.join(base_dir, "chrome-win64", "chrome.exe")
-chromedriver_path = os.path.join(base_dir, "chrome-win64", "chromedriver.exe")
-options = Options()
-options.binary_location = chrome_path
-service = Service(chromedriver_path)
-dr = webdriver.Chrome(service=service, options=options)
-url='https://v8.chaoxing.com/'
-dr.get(url)
-try:
-    dr.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div/div[1]/ul/li[2]').click()
-except:
-    dr.find_element(By.XPATH,'//*[@id="showPrompt"]/a').click()#
-    s(0.5)
-    dr.find_element(By.XPATH,'//*[@id="first842065"]/h3').click()
-    
-    print('无需登录')#//*[@id="first842065"]/h3
-q()
-pan('/html/body/div[4]/p/a','点击这里进个人空间')
-cl(f('/html/body/div[4]/p/a'))
-pand('/html/body/div[2]/div[1]/div[2]/div/div[1]/ul/li[4]/div[1]/h3','课程')
 def bof():
     global smdm
+    panduan3()
     try:
         iframe1 = WebDriverWait(dr, 2).until(
             EC.presence_of_element_located((By.ID, "iframe"))
@@ -108,10 +109,6 @@ def bof():
     except:
         print('播放失败')
         smdm+='E'
-a1=''
-b1=''
-c1=''
-smdm=''
 def bofzt():
     global a1,b1,c1,smdm
     try:
@@ -134,10 +131,8 @@ def bofzt():
         """
         playback_status = dr.execute_script(js_code, video_element)
         dr.switch_to.default_content()
-
         if(playback_status["paused"]):
             a1='暂停中'
-
         else:
             a1='播放中'
         b1=playback_status["currentTime"]
@@ -146,43 +141,51 @@ def bofzt():
     except:
         print('播放状态获取失败')
         smdm+='E'
+#--------------------------------------------------------------------------------------------准备工作
+if getattr(sys, 'frozen', False):
+    base_dir = os.path.dirname(sys.executable)  # 打包后使用 .exe 文件所在目录
+else:
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # 脚本模式下使用脚本所在目录
+os.chdir(base_dir)
+chrome_path = os.path.join(base_dir, "chrome-win64", "chrome.exe")
+chromedriver_path = os.path.join(base_dir, "chrome-win64", "chromedriver.exe")
+options = Options()
+options.add_argument("--user-data-dir=/user-data")
+options.add_argument("--profile-directory=Default")
+options.binary_location = chrome_path
+service = Service(chromedriver_path)
+dr = webdriver.Chrome(service=service, options=options)
+#--------------------------------------------------------------------------------------------
+url='https://v8.chaoxing.com/'
+dr.get(url)
+try:
+    dr.find_element(By.XPATH,'/html/body/div[1]/div/div[2]/div/div[1]/ul/li[2]').click()
+except:
+    dr.find_element(By.XPATH,'//*[@id="showPrompt"]/a').click()#
+    s(0.5)
+    dr.find_element(By.XPATH,'//*[@id="first842065"]/h3').click()
+    print('无需登录')
+q()
+pand('/html/body/div[4]/p/a','点击这里进个人空间')
+pandwb()
+a1=''
+b1=''
+c1=''
+smdm=''
 huiche()
 dr.close()
 window_handles = dr.window_handles
 dr.switch_to.window(window_handles[0])
 #-------------------------------------------------净化
-jinghua('/html/body/div[6]/div/div[1]/h2')
-jinghua('/html/body/div[6]/div/div[1]')
-jinghua('//*[@id="selector"]/div[3]/div[1]')
-jinghua('/html/body/div[7]/div[3]/div/div[1]/div[1]')
-jinghua('//*[@id="selector"]/div[2]')
+dr.execute_script(js_codejh)
 dr.execute_script("""
     var elements = document.querySelectorAll('div.firstLayer');
     elements.forEach(function(element) {
         element.remove();
     });
 """)
-root_lis = dr.find_element(By.ID, "coursetree").find_element(By.TAG_NAME, "ul").find_elements(By.TAG_NAME, "li")
-for li in root_lis:
-    try:
-        a=li.find_element(By.CLASS_NAME, "posCatalog_level").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./li")
-        for i in a:
-            try:
-                sb=i.find_element(By.CLASS_NAME,'posCatalog_select')
-                dr.execute_script("arguments[0].remove();", sb)
-                sb2=i.find_element(By.TAG_NAME,'ul').find_elements(By.XPATH, "./li")
-            except:
-                pass
-            for iii in sb2:
-                try:
-                    div=iii.find_element(By.TAG_NAME,'div')
-                    shu=div.find_elements(By.TAG_NAME,'span')
-                    if(len(shu)==1):
-                        dr.execute_script("arguments[0].remove();", iii)
-                except:
-                    pass
-    except:
-        pass
+s(1)
+#----------------------------------------------------------------------------------------获取信息
 ttt = dr.find_elements(By.CSS_SELECTOR, "span.posCatalog_name")
 titles = []
 span_elements = []  
@@ -194,7 +197,52 @@ for span in ttt:
         # print(title)
     else:
         dr.execute_script("arguments[0].parentNode.remove();", span)
-wancheng=len(dr.find_elements(By.CLASS_NAME,'icon_Completed'))
+cl(span_elements[0])
+spanText=dr.find_elements(By.CLASS_NAME,'spanText')
+runmode=0
+if(len(spanText)==1):
+    root_lis = dr.find_element(By.ID, "coursetree").find_element(By.TAG_NAME, "ul").find_elements(By.TAG_NAME, "li")
+    for li in root_lis:
+        try:
+            a=li.find_element(By.CLASS_NAME, "posCatalog_level").find_element(By.TAG_NAME, "ul").find_elements(By.XPATH, "./li")
+            for i in a:
+                try:
+                    sb=i.find_element(By.CLASS_NAME,'posCatalog_select')
+                    dr.execute_script("arguments[0].remove();", sb)
+                    sb2=i.find_element(By.TAG_NAME,'ul').find_elements(By.XPATH, "./li")
+                except:
+                    pass
+                for iii in sb2:
+                    try:
+                        div=iii.find_element(By.TAG_NAME,'div')
+                        shu=div.find_elements(By.TAG_NAME,'span')
+                        if(len(shu)==1):
+                            dr.execute_script("arguments[0].remove();", iii)
+                    except:
+                        pass
+        except:
+            pass
+    runmode=1
+    try:
+        wancheng=len(dr.find_elements(By.CLASS_NAME,'icon_Completed'))
+    except:
+        wancheng=0
+elif(len(spanText)==2):
+    runmode=2
+    q()
+    index=0
+    for i in titles:
+        print(index,i)
+        index+=1
+    wancheng=int(input('输入起始序号:'))
+else:
+    runmode=3
+    q()
+    index=0
+    for i in titles:
+        print(index,i)
+        index+=1
+    wancheng=int(input('输入起始序号:'))
 initwan=wancheng
 zhen=wancheng
 q()
@@ -203,6 +251,8 @@ try:
     bof()
 except:
     pass
+from datetime import datetime
+start_time = datetime.now()
 while(3):
     smdm=''
     try:
@@ -249,10 +299,10 @@ while(3):
             # cl(span_elements[zhen])
             bof() 
         smdm+='(Y4)'
-        print('神秘代码：',smdm)
+        print('神秘代码：',smdm,' 运行模式:',runmode)
         print(titles[zhen])
-        print(f'{zhen+1}/{len(span_elements)+1}',' ',' 已完成:',wancheng,'剩余:',len(span_elements)-zhen+1)  
-        print('本次执行已完成:',wancheng-initwan,'个小节')
+        print(f'{zhen+1}/{len(span_elements)}','    已完成:',wancheng,' 剩余:',len(span_elements)-zhen)  
+        print('本次执行完成了:',wancheng-initwan,'个小节  运行时间:',what_time(start_time))
         print(a1,f'视频进度：{int(int(b1)/int(c1)*100)}%')
         s(3)
     except:
